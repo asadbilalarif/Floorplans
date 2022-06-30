@@ -1,0 +1,144 @@
+﻿
+@{
+    Layout = null;
+
+    string Delete = @ViewBag.Error;
+
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from doccure-html.dreamguystech.com/template/admin/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Jul 2021 15:17:31 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>WSA - Login</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/assets/img/favicon.png">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/bootstrap.min.css">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/font-awesome.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/style.css">
+
+    <!--[if lt IE 9]>
+        <script src="~/Content/assets/js/html5shiv.min.js"></script>
+        <script src="~/Content/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body id="Body">
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper login-body">
+        <div class="login-wrapper">
+            <div class="container">
+                <div class="loginbox">
+                    <div class="login-left">
+                        <h4 style="color:white;text-align:center">Floor Plans</h4>
+                        @*<img class="img-fluid" src="~/Content/assets/img/logo-white.png" alt="Logo">*@
+                    </div>
+                    <div class="login-right">
+                        <div class="login-right-wrap">
+                            <div style="display:none;" class="alert alert-danger alert-dismissible fade show" id="error" role="alert">
+                                @ViewBag.Error
+                            </div>
+                            <h1>Login</h1>
+                            <p class="account-subtitle">Access to our dashboard</p>
+
+                            <!-- Form -->
+                            @using (Html.BeginForm("Login", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {@Html.AntiForgeryToken()
+                            <div class="form-group">
+
+                                @*<span style="color:red" id="error">@ViewBag.Error</span>*@
+                                <input class="form-control" type="text" name="Email" placeholder="Email" required>
+                            </div>
+                            <div class="form-group">
+                                <input class="form-control" type="password" name="Password" placeholder="Password" required>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary btn-block" type="submit">Login</button>
+                            </div>
+                        }
+                            <!-- /Form -->
+
+                            <div class="text-center forgotpass"><a href="@Url.Action("ForgetPassword","Account")">Forgot Password?</a></div>
+                            @*<div class="login-or">
+                                    <span class="or-line"></span>
+                                    <span class="span-or">or</span>
+                                </div>*@
+
+                             @*Social Login 
+                            <div class="social-login">
+                                    <span>Login with</span>
+                                    <a href="#" class="facebook"><i class="fa fa-facebook"></i></a><a href="#" class="google"><i class="fa fa-google"></i></a>
+                                </div>
+                             /Social Login*@ 
+                            @*<div class="text-center dont-have">Don’t have an account? <a href="@Url.Action("Signup","Account")">Register</a></div>*@
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="content">
+                        <h3>Hello, this is a H3 tag</h3>
+
+                        <p>A paragraph</p>
+                    </div>
+                    <div id="editor"></div>
+                    <button id="cmd">generate PDF</button>*@
+
+            </div>
+        </div>
+    </div>
+    <!-- /Main Wrapper -->
+    <!-- jQuery -->
+    <script src="~/Content/assets/js/jquery-3.2.1.min.js"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="~/Content/assets/js/popper.min.js"></script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+
+    @*<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"></script>*@
+
+    <!-- Custom JS -->
+    <script src="~/Content/assets/js/script.js"></script>
+
+    <script>
+        //var doc = new jsPDF();
+        //var specialElementHandlers = {
+        //    '#editor': function (element, renderer) {
+        //        return true;
+        //    }
+        //};
+
+        //$('#cmd').click(function () {
+        //    doc.fromHTML($('#Body').html(), 15, 15, {
+        //        'width': 170,
+        //        'elementHandlers': specialElementHandlers
+        //    });
+        //    doc.save('sample-file.pdf');
+        //});
+        $(document).ready(function () {
+
+            if ("@Delete" != "") {
+                $('#error').fadeIn();
+                $('#error').fadeOut(10000);
+            }
+            else {
+                $('#error').fadeOut();
+            }
+
+        });
+    </script>
+
+</body>
+
+<!-- Mirrored from doccure-html.dreamguystech.com/template/admin/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Jul 2021 15:17:32 GMT -->
+</html>

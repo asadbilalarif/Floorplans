@@ -1,0 +1,196 @@
+﻿@{ 
+    ViewBag.Access = Session["Access"];
+    int PID = 0;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from doccure-html.dreamguystech.com/template/admin/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Jul 2021 15:15:59 GMT -->
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>Doccure - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="~/Content/assets/img/favicon.png">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/bootstrap.min.css">
+
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/font-awesome.min.css">
+
+    <!-- Feathericon CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/feathericon.min.css">
+
+    <link rel="stylesheet" href="~/Content/assets/plugins/morris/morris.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="~/Content/assets/css/style.css">
+
+    <!--[if lt IE 9]>
+        <script src="~/Content/assets/js/html5shiv.min.js"></script>
+        <script src="~/Content/assets/js/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+
+        <!-- Header -->
+        <div class="header">
+
+            <!-- Logo -->
+            <div class="header-left">
+                <a href="index.html" class="logo">
+                    @*<img src="~/Content/assets/img/logo.png" alt="Logo">*@
+                    <h3>Floor Plans</h3>
+                </a>
+                <a href="index.html" class="logo logo-small">
+                    @*<img src="~/Content/assets/img/logo-small.png" alt="Logo" width="30" height="30">*@
+                    <h3>FP</h3>
+                </a>
+            </div>
+            <!-- /Logo -->
+
+            <a href="javascript:void(0);" id="toggle_btn">
+                <i class="fe fe-text-align-left"></i>
+            </a>
+
+            @*<div class="top-nav-search">
+                <form>
+                    <input type="text" class="form-control" placeholder="Search here">
+                    <button class="btn" type="submit"><i class="fa fa-search"></i></button>
+                </form>
+            </div>*@
+
+            <!-- Mobile Menu Toggle -->
+            <a class="mobile_btn" id="mobile_btn">
+                <i class="fa fa-bars"></i>
+            </a>
+            <!-- /Mobile Menu Toggle -->
+            <!-- Header Right Menu -->
+            <ul class="nav user-menu">
+                <li class="nav-item dropdown has-arrow">
+                    <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
+                        <span class="user-img"><img class="rounded-circle" src="~/Content/assets/img/profiles/avatar-01.jpg" width="31" alt="Ryan Taylor"></span>
+                    </a>
+                    <div class="dropdown-menu">
+                        <div class="user-header">
+                            <div class="avatar avatar-sm">
+                                <img src="~/Content/assets/img/profiles/avatar-01.jpg" alt="User Image" class="avatar-img rounded-circle">
+                            </div>
+                            <div class="user-text">
+                                <h6>Ryan Taylor</h6>
+                                <p class="text-muted mb-0">Administrator</p>
+                            </div>
+                        </div>
+                        @*<a class="dropdown-item" href="profile.html">My Profile</a>
+                        <a class="dropdown-item" href="settings.html">Settings</a>*@
+                        <a class="dropdown-item" href="@Url.Action("ChangePassword","Account")">Change Password</a>
+                        <a class="dropdown-item" href="@Url.Action("Login","Account")">Logout</a>
+                    </div>
+                </li>
+                <!-- /User Menu -->
+
+            </ul>
+            <!-- /Header Right Menu -->
+
+        </div>
+        <!-- /Header -->
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-inner slimscroll">
+                <div id="sidebar-menu" class="sidebar-menu">
+                    <ul>
+                        <li class="menu-title">
+                            <span>Main</span>
+                        </li>
+                        @foreach (var AccessLevel in @ViewBag.Access)
+                        {
+
+
+                            if (@AccessLevel.tblMenu.isParent == true)
+                            {
+                                {
+
+                                    PID = @AccessLevel.tblMenu.MenuId;
+
+
+                                }
+                                <li class="submenu " id="@AccessLevel.tblMenu.ElementId">
+                                    <a href="#"><i class="@AccessLevel.tblMenu.FontAwesome" aria-hidden="true" style="font-size:18px;">    </i> <span>  @AccessLevel.tblMenu.Name</span> <span class="menu-arrow"></span></a>
+
+                                    <ul style="display: none;">
+                                        @foreach (var AccessLevel1 in @ViewBag.Access)
+                                        {
+                                            if (@AccessLevel1.tblMenu.ParentId == @PID)
+                                            {
+                                                <li class="LiSub" id="@AccessLevel1.tblMenu.ElementId" @*style="background-color: #111827;"*@>
+                                                    <a href="@Url.Action(@AccessLevel1.tblMenu.ActionName, @AccessLevel1.tblMenu.ControllerName)"><i class="@AccessLevel1.tblMenu.FontAwesome" aria-hidden="true" style="font-size:15px;">      </i> <span>  @AccessLevel1.tblMenu.Name </span></a>
+                                                </li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                if (@AccessLevel.tblMenu.ParentId == 0)
+                                {
+                                    <li class="Li" id="@AccessLevel.tblMenu.ElementId">
+                                        <a href="@Url.Action(@AccessLevel.tblMenu.ActionName, @AccessLevel.tblMenu.ControllerName)"><i class="@AccessLevel.tblMenu.FontAwesome" aria-hidden="true" style="font-size:30px;">   </i> <span>   @AccessLevel.tblMenu.Name</span> </a>
+                                    </li>
+                                }
+
+                            }
+
+                        }
+                        @*<li class="active">
+                            <a href="index.html"><i class="fe fe-home"></i> <span>Dashboard</span></a>
+                        </li>
+                        <li class="submenu">
+                            <a href="#"><i class="fe fe-table"></i> <span> User Management </span> <span class="menu-arrow"></span></a>
+                            <ul style="display: none;">
+                                <li><a href="@Url.Action("Users","User")">Users </a></li>
+                                <li><a href="@Url.Action("RolesPermission","User")">Roles & Permissions </a></li>
+                            </ul>
+                        </li>*@
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- /Sidebar -->
+        <!-- Page Wrapper -->
+        <div class="page-wrapper">
+
+            @RenderBody()
+        </div>
+        <!-- /Page Wrapper -->
+
+    </div>
+    <!-- /Main Wrapper -->
+    <!-- jQuery -->
+    <script src="~/Content/assets/js/jquery-3.2.1.min.js"></script>
+
+    <!-- Bootstrap Core JS -->
+    <script src="~/Content/assets/js/popper.min.js"></script>
+    <script src="~/Content/assets/js/bootstrap.min.js"></script>
+
+    <!-- Slimscroll JS -->
+    <script src="~/Content/assets/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    @*<script src="~/Content/assets/plugins/raphael/raphael.min.js"></script>*@
+    @*<script src="~/Content/assets/plugins/morris/morris.min.js"></script>*@
+    @*<script src="~/Content/assets/js/chart.morris.js"></script>*@
+
+    <!-- Custom JS -->
+    <script src="~/Content/assets/js/script.js"></script>
+
+</body>
+
+<!-- Mirrored from doccure-html.dreamguystech.com/template/admin/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 05 Jul 2021 15:16:39 GMT -->
+</html>

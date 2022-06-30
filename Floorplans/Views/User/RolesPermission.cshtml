@@ -1,0 +1,606 @@
+﻿@model IEnumerable<Floorplans.Models.tblRole>
+@{
+    ViewData["Title"] = "RolesPermission";
+    if (ViewBag.SelectedRole == null)
+    {
+        ViewBag.roleid = 0;
+    }
+    else
+    {
+        ViewBag.roleid = ViewBag.SelectedRole.RoleId;
+    }
+
+    string Update = @ViewBag.Update;
+}
+
+<head>
+
+    <link href="~/Content/assets/css/RolesPermission.css" rel="stylesheet" />
+
+
+    <style>
+        .main-nav > li.active > a {
+            color: #009efb;
+        }
+
+        a {
+            color: !important;
+        }
+
+        .modal-header {
+            background-color: #009efb;
+            color: white;
+        }
+
+
+        .table-striped > tbody > tr:nth-of-type(2n + 1) {
+            background-color: rgba(0,0,0,.05) !important;
+        }
+
+        .table-striped tbody tr:nth-of-type(even) {
+            background-color: transparent !important;
+        }
+    </style>
+</head>
+
+@*<section class="section">*@
+<div class="content container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="breadcrumb-bar">
+                <div class="container-fluid">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 col-6">
+                            <h5 class="breadcrumb-title">ROLES & PERMISSIONS</h5>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><div style="display:none;" class="alert alert-info alert-dismissible fade show" id="UpdateAlert" role="alert">
+        <strong>Success!</strong> @ViewBag.Update
+    </div><br />
+
+    @*<div class="row">
+            <div class="col-sm-8">
+                <h4 class="page-title">Roles & Permissions</h4>User
+            </div>
+        </div>*@
+    <div class="row">
+        <div class="col-sm-4 col-md-4 col-lg-4 col-xl-3">
+            <a href="add-role.html" class="btn btn-primary btn-block" data-toggle="modal" data-target="#RoleModal" id="CreateRoleB"><i class="fa fa-plus" style="color:white;"> Add Roles</i></a>
+            <div class="roles-menu">
+                <ul>
+                    @foreach (Floorplans.Models.tblRole Role in Model)
+                    {
+                        if (Role.RoleId == @ViewBag.roleid)
+                        {
+                            <li class="active">
+                                <input type="text" style="display:none;" name="TblRoleID" value=@Role.RoleId>
+                                @if (Role.isActive == true)
+                                {
+                                    <input type="checkbox" name="check" value="1" style="display:none;" id="TblRoleStatus" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="check" value="0" style="display:none;" id="TblRoleStatus">
+                                }
+
+                                <a href="@Url.Action("RolesPermission","User",new {id=@Role.RoleId })" id="TblRole">@Role.Role</a>
+                                <span class="role-action">
+                                    <a href="edit-role.html" id="EditRole" data-toggle="modal" data-target="#RoleModal">
+                                        <span class="action-circle large">
+                                            <i class="material-icons">edit</i>
+                                        </span>
+                                    </a>
+                                    @*<a href="#" data-toggle="modal" data-target="#delete_role" id="DeleteRole">
+                                        <span class="action-circle large delete-btn">
+                                            <i class="material-icons">delete</i>
+                                        </span>
+                                        </a>*@
+                                </span>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <input type="text" style="display:none;" name="TblRoleID" value=@Role.RoleId>
+                                @if (Role.isActive == true)
+                                {
+                                    <input type="checkbox" name="check" value="1" style="display:none;" id="TblRoleStatus" checked>
+                                }
+                                else
+                                {
+                                    <input type="checkbox" name="check" value="0" style="display:none;" id="TblRoleStatus">
+                                }
+
+                                <a href="@Url.Action("RolesPermission","User",new {id=@Role.RoleId })" id="TblRole">@Role.Role</a>
+                                <span class="role-action">
+                                    <a href="edit-role.html" id="EditRole" data-toggle="modal" data-target="#RoleModal">
+                                        <span class="action-circle large">
+                                            <i class="material-icons">edit</i>
+                                        </span>
+                                    </a>
+                                    @*<a href="#" data-toggle="modal" data-target="#delete_role" id="DeleteRole" >
+                                            <span class="action-circle large delete-btn">
+                                                <i class="material-icons">delete</i>
+                                            </span>
+                                        </a>*@
+                                </span>
+                            </li>
+                        }
+
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-8 col-md-8 col-lg-8 col-xl-9">
+
+            @*<h6 class="card-title m-b-20">Module Access</h6>*@
+
+            @*   <input type="text" id="MARoleID" style="display:none;">
+                <input type="text" id="MARole" readonly=""><br /><br />
+                <div class="m-b-30">
+                    <ul class="list-group">
+                        @foreach (IG_Control_System.Models.tblmenu Menu in @ViewBag.MenuList)
+                        {
+                            <li class="list-group-item">
+                                <input type="text" id="MenuID" style="display:none;" value=@Menu.menuid>
+                                @Menu.name
+                                <div class="material-switch float-right">
+                                    <input id="staff_module" type="checkbox">
+                                    <label for="staff_module" class="badge-success"></label>
+                                </div>
+                            </li>
+                        }
+                                <li class="list-group-item">
+                            Holidays
+                            <div class="material-switch float-right">
+                                <input id="holidays_module" type="checkbox">
+                                <label for="holidays_module" class="badge-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Leave Request
+                            <div class="material-switch float-right">
+                                <input id="leave_module" type="checkbox">
+                                <label for="leave_module" class="badge-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Events
+                            <div class="material-switch float-right">
+                                <input id="events_module" type="checkbox">
+                                <label for="events_module" class="badge-success"></label>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            Chat
+                            <div class="material-switch float-right">
+                                <input id="chat_module" type="checkbox">
+                                <label for="chat_module" class="badge-success"></label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>*@
+            @*@using (Html.BeginForm("CreateAccessLevel", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {@Html.AntiForgeryToken()*@
+            @if (@ViewBag.SelectedRole != null)
+            {
+                <input type="text" id="MARoleID" name="roleid" style="display:none;" value="@ViewBag.SelectedRole.RoleId" required>
+                <input type="text" id="MARole" readonly="" style="display:none;" value="@ViewBag.SelectedRole.Role" required>
+                <h3>@ViewBag.SelectedRole.Role</h3><br />
+            }
+            else
+            {
+                <input type="text" id="MARoleID" name="roleid" style="display:none;">
+                <input type="text" id="MARole" readonly="" style="display:none;"><small id="LblError" style="display:none; color:red;">Role Must be Selected!!!</small><br /><br />
+            }
+
+            <div class="table-responsive">
+                <table class="table table-striped custom-table" id="MenuAccessTbl">
+                    <thead>
+                        <tr style="background-color: #1b5a90 !important;color: white !important;">
+                            <th style="display:none;">Manu ID</th>
+                            <th>Module Access & Permission</th>
+                            <th class="text-center">Active</th>
+                            <th class="text-center" style="display:none;">Create</th>
+                            <th class="text-center" style="display:none;">Edit</th>
+                            <th class="text-center" style="display:none;">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (@ViewBag.SelectedMenuAccess != null)
+                        {
+                            foreach (Floorplans.Models.MenuAccess Menu in @ViewBag.SelectedMenuAccess)
+                            {
+                                <tr>
+                                    <td style="display:none;"><input type="text" id="manuid" name="manuid" value="@Menu.menuid"></td>
+                                    <td>@Menu.menu.Name</td>
+                                    <td class="text-center">
+                                        @if (Menu.isactive == true)
+                                        {
+                                            <input type="checkbox" checked name="isactive">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="isactive">
+                                        }
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        @if (Menu.accesscreate == true)
+                                        {
+                                            <input type="checkbox" checked name="accesscreate">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="accesscreate">
+                                        }
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        @if (Menu.accessedit == true)
+                                        {
+                                            <input type="checkbox" checked name="accessedit">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="accessedit">
+                                        }
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        @if (Menu.accessdelete == true)
+                                        {
+                                            <input type="checkbox" checked name="accessdelete">
+                                        }
+                                        else
+                                        {
+                                            <input type="checkbox" name="accessdelete">
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            foreach (Floorplans.Models.tblMenu Menu in @ViewBag.MenuList)
+                            {
+                                <tr>
+                                    <td style="display:none;"><input type="text" id="manuid" name="manuid" value="@Menu.MenuId"></td>
+                                    <td>@Menu.Name</td>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="isactive">
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        <input type="checkbox" name="accesscreate">
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        <input type="checkbox" name="accessedit">
+                                    </td>
+                                    <td class="text-center" style="display:none;">
+                                        <input type="checkbox" name="accessdelete">
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+
+            </div><br />
+            <div id="loading" style="display:none;margin: 0 auto; text-decoration-color:cornflowerblue;"><div class="spinner-border text-success" id="display_loading" style="margin: 0 auto;"></div><div class="spinner-border text-success" id="display_loading" style="display:none;margin: 0 auto;"></div> Loading...</div>
+            <button class="btn btn-primary" type="submit" id="btnSave">Save Changes</button>
+            @*}*@
+        </div>
+    </div>
+</div>
+
+@*</section>*@
+
+
+<div class="modal fade" id="RoleModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" style="display:none;color:white;" id="CRHeading">Add Role</h4>
+                <h4 class="modal-title" style="display:none;color:white;" id="ERHeading">Edit Role</h4>
+                @*<button type="button" class="btn btn-danger" data-dismiss="modal">&times;</button>*@
+
+            </div>
+            <div class="modal-body">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <form>
+                            <span id="Roleerror"></span>
+                            <div class="form-group">
+                                <input class="form-control" style="display:none;" type="text" id="RoleID">
+                                <label>Role Name <span class="text-danger">*</span></label>
+                                <input class="form-control" type="text" id="RoleName">
+                            </div>
+                            <div class="form-group" style="display:none;">
+                                <label class="display-block">Status</label><br />
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status" id="RoleActive" value="1" checked>
+                                    <label class="form-check-label" for="role_active">
+                                        Active
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="status" id="RoleInActive" value="0">
+                                    <label class="form-check-label" for="role_inactive">
+                                        Inactive
+                                    </label>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <div id="Roleloading" style="display:none;margin: 0 auto; text-decoration-color:cornflowerblue;"><div class="spinner-border text-success" id="display_loading" style="margin: 0 auto;"></div><div class="spinner-border text-success" id="display_loading" style="display:none;margin: 0 auto;"></div> Loading...</div>
+                <input type="button" class="btn btn-primary" id="RoleSubmit" value="Save">
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div id="delete_role" class="modal fade delete-modal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img src="~/Content/assets/img/sent.png" alt="" width="50" height="46">
+                <h3>Are you sure want to delete this Role?</h3>
+                <input type="text" id="DeleteRoleID" style="display:none;">
+                <div class="m-t-20">
+                    <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
+                    <button type="submit" class="btn btn-danger" id="CDeleteRole">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="sidebar-overlay" data-reff=""></div>*@
+
+
+<!-- jQuery -->
+<script src="~/Content/assets/js/jquery-3.2.1.min.js"></script>
+
+<script>
+
+
+        $("body").on("click", "#btnSave", function () {
+
+
+
+            $("#LblError").fadeOut();
+                $("#btnSave").attr("disabled", true);
+                $("#loading").show();
+
+                //Loop through the Table rows and build a JSON array.
+            if ($("#MARoleID").val()!=0) {
+                var Items = new Array();
+                $("#MenuAccessTbl TBODY TR").each(function () {
+                    var row = $(this);
+                    var Item = {};
+
+                    Item.RoleId = $("#MARoleID").val();
+                    Item.MenuId = row.find("input").eq(0).val();
+                    Item.isActive = row.find("input").eq(1).prop("checked");
+                    Item.CreateAccess = row.find("input").eq(2).prop("checked");
+                    Item.EditAccess = row.find("input").eq(3).prop("checked");
+                    Item.DeleteAccess = row.find("input").eq(4).prop("checked");
+                    Items.push(Item);
+                });
+                console.log(Items);
+
+
+                //Send the JSON array to Controller using AJAX.
+
+                $.ajax({
+                    type: "POST",
+                    url: "/User/CreateAccessLevel",
+                    data: JSON.stringify(Items),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        //alert(r + " record(s) inserted.");
+                        var url = window.location.origin;
+                        url += '/User/RolesPermission?Update=Permission has been update successfully.';
+                        window.location.href = url;
+                    }
+                });
+            }
+            else {
+
+                $("#LblError").fadeIn();
+                $("#loading").hide();
+            }
+
+         });
+
+
+        //$("body").on("click", "#TblRole", function () {
+        //    var currentRow = $(this).closest("li");
+        //    if (currentRow.find('#TblRoleStatus').val() == 1) {
+        //        $("#MARoleID").val(currentRow.find("input:eq(0)").val());
+        //        $("#MARole").val(currentRow.find("a:eq(0)").text());
+        //    }
+        //    else {
+        //        $("#MARole").val("Role not active");
+        //    }
+        //    //alert(currentRow.find('#TblRoleStatus').val());
+        //    //alert($("#ID").val());
+        //});
+
+        //$("body").on("click", "#DeleteRole", function () {
+        //    var currentRow = $(this).closest("li");
+        //    $("#DeleteRoleID").val(currentRow.find("input:eq(0)").val());
+        //    //alert($("#DeleteUserID").val());
+        //});
+
+        //$("#CDeleteRole").on("click", function () {
+
+
+        //    $("#CDeleteRole").attr("disabled", true);
+
+        //    var ID = $("#DeleteRoleID").val();
+
+        //    var model = {
+        //        roleid: ID,
+        //    };
+        //    console.log(model);
+
+
+        //    //Send the JSON array to Controller using AJAX.
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "/Home/DeleteRole",
+        //        data: JSON.stringify(model),
+        //        contentType: "application/json; charset=utf-8",
+        //        dataType: "json",
+        //        success: function (r) {
+        //            //alert(r + " record(s) inserted.");
+        //            location.reload();
+        //        }
+        //    });
+
+        //});
+
+        $("body").on("click", "#EditRole", function () {
+            var error = $("#Roleerror");
+            error.text('');
+            var currentRow = $(this).closest("li");
+            $("#CRHeading").hide();
+            $("#ERHeading").show();
+            $("#RoleID").val(currentRow.find("input:eq(0)").val());
+            $("#RoleName").val(currentRow.find("a:eq(0)").text());
+
+            if (currentRow.find('#TblRoleStatus').val() == 1) {
+                $("#RoleActive").prop('checked', true);
+
+            }
+            else {
+                $("#RoleInActive").prop('checked', true);
+            }
+            //alert(currentRow.find('#TblRoleStatus').val());
+            //alert($("#ID").val());
+        });
+
+        $("body").on("click", "#CreateRoleB", function () {
+            var error = $("#error");
+            error.text('');
+            $("#ERHeading").hide();
+            $("#CRHeading").show();
+            $("#RoleID").val('');
+            $("#RoleName").val('');
+            //$('#RoleActive').prop('checked', false);
+            //$('#RoleInActive').prop('checked', false);
+        });
+
+        $("#RoleSubmit").on("click", function () {
+
+            var error = $("#Roleerror");
+
+            if ($("#RoleName").val() != "" && ($("#RoleActive").is(':checked') != false || $("#RoleInActive").is(':checked') != false)) {
+                error.text('');
+                $("#UserSubmit").attr("disabled", true);
+                $("#Roleloading").show();
+
+
+                var RId = $("#RoleID").val();
+                var RName = $("#RoleName").val();
+                var isactive;
+                if ($('input[name="status"]:checked').val() == 1) {
+
+                    isactive = true;
+                }
+                else {
+                    isactive = false;
+                }
+
+                if (RId != 0) {
+                    var model = {
+                        RoleId: RId,
+                        Role: RName,
+                        isActive: isactive,
+                    };
+                }
+                else {
+                    var model = {
+
+                        Role: RName,
+                        isActive: isactive,
+                    };
+                }
+
+                console.log(model);
+
+
+                //Send the JSON array to Controller using AJAX.
+
+                $.ajax({
+                    type: "POST",
+                    url: "/User/CreateRole",
+                    data: JSON.stringify(model),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (r) {
+                        if (r.id == 1) {
+                            error.text('  *Role Already Exsist!!!  ');
+                            $("#RoleSubmit").attr("disabled", false);
+                            error.css('color', 'red');
+                            $("#Roleloading").hide();
+                        }
+                        else {
+                            var url = window.location.origin;
+                            url += '/User/RolesPermission/';
+                            window.location.href = url;
+                            //location.reload();
+                        }
+                    }
+                });
+
+            }
+            else {
+                error.text('');
+                error.css('color', 'red');
+                if ($("#RoleName").val() == "") {
+
+                    text = error.text('  *Role Name must be filled!!!  ');
+                }
+                if ($("#RoleActive").is(':checked') == false && $("#RoleInActive").is(':checked') == false) {
+                    text = error.append('  *Status must be selected!!!  ');
+                }
+            }
+
+        });
+
+        $(document).ready(function () {
+
+
+            if ("@Update" != "") {
+                $('#UpdateAlert').fadeIn();
+                $('#UpdateAlert').fadeOut(6000);
+            }
+            else {
+                $('#UpdateAlert').fadeOut();
+            }
+
+            //$(".nav li").removeClass("active");
+            //$('#').addClass('active');
+
+            $(".nav li ul li").removeClass("active");
+            $('#Roles').addClass('active');
+            $('#UM a').addClass('subdrop');
+            $("#UM  ul").first().css('display', 'block');
+
+        });
+
+</script>

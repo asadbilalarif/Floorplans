@@ -1,0 +1,259 @@
+﻿@model IEnumerable<Floorplans.Models.tblUser>
+
+@{
+    ViewData["Title"] = "Users";
+    string Succ = @ViewBag.Success;
+    string Update = @ViewBag.Update;
+    string Delete = @ViewBag.Delete;
+
+    HttpCookie cookieObj = Request.Cookies["Settings"];
+    string DateFormat = cookieObj["DateFormat"];
+    string Retrieves = cookieObj["Retrieves"];
+}
+
+
+<head>
+
+    <style>
+        .select2-container {
+            width: 100% !important;
+        }
+    </style>
+
+
+
+</head>
+
+
+
+
+<!-- Page Wrapper -->
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <!-- /Page Header -->
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="breadcrumb-bar">
+                            <div class="container-fluid">
+                                <div class="row align-items-center">
+                                    <div class="col-md-6 col-6">
+                                        <h5 class="breadcrumb-title">User List</h5>
+                                    </div>
+                                    <div class="col-md-6 col-6 text-right" id="CreateUserB">
+                                        <a href="@Url.Action("CreateUser","User")" class="btn btn-primary " style="float:right;"><i class="fa fa-plus"></i> Create New User</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div style="display:none;" class="alert alert-success alert-dismissible fade show" id="SuccessAlert" role="alert">
+                    <strong>Success!</strong> @ViewBag.Success
+                </div>
+                <div style="display:none;" class="alert alert-info alert-dismissible fade show" id="UpdateAlert" role="alert">
+                    <strong>Success!</strong> @ViewBag.Update
+                </div>
+                <div style="display:none;" class="alert alert-warning alert-dismissible fade show" id="DeleteAlert" role="alert">
+                    <strong>Success!</strong> @ViewBag.Delete
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div class="table-responsive">
+                            <table class="cell-border table table-hover table-center  mb-0 " id="UserTable">
+                                <thead>
+                                    <tr>
+                                        <th style="display:none;">User ID</th>
+                                        <th>username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        @*<th>Active</th>*@
+
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (Floorplans.Models.tblUser User in Model)
+                                    {
+                                        <tr>
+                                            <td style="display:none;">@User.UserId</td>
+                                            <td>@User.username</td>
+                                            <td>@User.FirstName</td>
+                                            <td>@User.LastName</td>
+
+                                            <td>@User.Email</td>
+                                            <td>@User.tblRole.Role</td>
+                                            @*@if (User.isActive == true)
+                                                {
+                                                    <td>
+                                                        <span class="badge badge-primary">Active</span>
+                                                    </td>
+                                                    /**/
+
+                                                }
+                                                else
+                                                {
+                                                    <td>
+                                                        <span class="badge badge-danger">In-Active</span>
+                                                    </td>
+                                                }*@
+
+                                            <td class="text-end">
+                                                <div class="actions">
+                                                    <a href="@Url.Action("CreateUser","User",new {id=User.UserId })" id="EditUser" class="text-black">
+                                                        <i class="fa fa-edit"></i> Edit
+                                                    </a>
+                                                    <a class="text-danger" href="#" data-toggle="modal" data-target="#UserDelete" id="DeleteUser">
+                                                        <i class="fa fa-trash"></i> Delete
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div id="UserDelete" class="modal fade delete-modal" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <img src="~/Content/assets/img/sent.png" alt="" width="50" height="46">
+                <input class="form-control" type="text" id="DeleteUserID" style="display:none;">
+                <h5>Are you sure want to delete this user information?</h5>
+                <div class="m-t-20">
+                    <p id="ConfigDerror" style="color:red;"></p>
+                    <a href="#" class="btn btn-white" data-dismiss="modal">Close</a>
+                    <input type="button" class="btn btn-danger" id="CDeleteUser" value="Delete">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /Page Wrapper -->
+<!-- jQuery -->
+
+
+<script src="~/Content/assets/js/jquery-3.5.1.js"></script>
+
+
+@*<script src="~/Content/assets/js/jquery-3.2.1.min.js"></script>*@
+@*<script src="~/Theme/template/admin/assets/js/jquery.min.js"></script>*@
+<script>
+
+
+    $("body").on("click", "#DeleteUser", function () {
+        $("#ConfigDerror").text("");
+        $("#CDeleteUser").attr("disabled", false);
+        var currentRow = $(this).closest("tr");
+        $("#DeleteUserID").val(currentRow.find("td:eq(0)").text());
+        //alert($("#DeleteDeviceInfoID").val());
+    });
+
+    $("#CDeleteUser").on("click", function () {
+
+
+        $("#CDeleteUser").attr("disabled", true);
+
+        var ID = $("#DeleteUserID").val();
+
+        var model = {
+            UserId: ID,
+        };
+        console.log(model);
+
+
+        //Send the JSON array to Controller using AJAX.
+        $.ajax({
+            type: "POST",
+            url: "/User/DeleteUser",
+            data: JSON.stringify(model),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (r) {
+                if (r == 1) {
+
+                    var url = window.location.origin;
+                    url += '/User/Users?Delete=User has been delete successfully.';
+                    window.location.href = url;
+                }
+                //alert(r + " record(s) inserted.");
+            }
+        });
+
+    });
+
+
+
+    $(document).ready(function () {
+
+
+        if ("@Succ"!="") {
+            $('#SuccessAlert').fadeIn();
+            $('#SuccessAlert').fadeOut(6000);
+        }
+        else {
+            $('#SuccessAlert').fadeOut();
+        }
+        if ("@Update" != "") {
+            $('#UpdateAlert').fadeIn();
+            $('#UpdateAlert').fadeOut(6000);
+        }
+        else {
+            $('#UpdateAlert').fadeOut();
+        }
+        if ("@Delete" != "") {
+            $('#DeleteAlert').fadeIn();
+            $('#DeleteAlert').fadeOut(6000);
+        }
+        else {
+            $('#DeleteAlert').fadeOut();
+        }
+
+        @*$('#UserTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'pageLength',
+                {
+
+
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: [ 1, 2,3,4,5,6,7,8,9,10,11,12,13,14]
+                    }
+                }
+            ],
+            "lengthMenu": [@Retrieves],
+            searching: true, paging: true
+        });*@
+
+
+
+        $(".nav li ul li").removeClass("active");
+        $('#Users').addClass('active');
+        $('#UM a').addClass('subdrop');
+        $("#UM  ul").first().css('display', 'block');
+
+
+    });
+
+
+
+
+</script>
